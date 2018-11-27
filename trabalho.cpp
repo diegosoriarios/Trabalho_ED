@@ -1,264 +1,201 @@
-typedef struct no{
-    string nome;
-    string desc;
-    struct no *prox;
-    struct no *ant;
-    struct no *rot;
-    no(){//construtor
-        nome = "";
-        desc = "";
-        prox = NULL;
-        ant = NULL;
-        rot = NULL;
-    }
-} No;
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 
-typedef struct lista{
-    No *inicio;
-    No *fim;
-    int tamanho;
-    lista(){//construtor
-        inicio = NULL;
-        fim = NULL;
-        tamanho = 0;
-    }
-    ~lista(){//destrutor
-        No *n = inicio;
-        while(n){
-            No *aux = n;
-            n = n->prox;
-            delete aux; //libera memória;
-        }
-        inicio = NULL;
-        fim = NULL;
-        tamanho = 0;
-    }
-} Lista;
+using namespace std;
 
+#include "listas.hpp"
 
-void inserirInicio(Lista *l, string nome, string desc){
-    No *novo = new No();
-    novo->nome = nome;
-    novo->desc = desc;
-    novo->prox = l->inicio;
-    if(!l->inicio){//quer dizer que a lista estava vazia
-        l->fim = novo;
-    }else{
-        l->inicio->ant = novo;
-    }
-    l->inicio = novo;
-    l->tamanho++;
-}
-
-
-void insereOrdenado(Lista *l, string valor){
-    No *anterior = NULL;
-    No *atual = l->inicio;
-    while(atual && atual->nome < valor){
-        anterior = atual;
-        atual = atual->prox;
-    }
-    No *novo = new No();
-    novo->nome = valor;
-    if(!anterior){//Se não tiver nenhum elemento da lista
-        novo->prox = l->inicio;
-        if(l->inicio){// a lista já tinha valores
-            l->inicio->ant = novo;
-        }
-        l->inicio = novo;
-        if(!l->fim){//a lista estava vazia
-            l->fim = l->inicio;
-        }
-    }else{//se incluido no meio ou no fim
-        novo->prox = atual;
-        novo->ant = anterior;
-        anterior->prox = novo;
-        if(atual){//se não for incluir no fim
-            atual->ant = novo;
-        }
-        if(!novo->prox){//se for incluir no fim
-            l->fim = novo;
+bool validarString(string texto){
+    for(int i = 0; i < texto.size(); i++){
+        if(isspace(texto[i])){
+            return false;
         }
     }
-    l->tamanho++;
-}
-
-bool removeValor(Lista *l, string valor){
-    No *anterior = NULL;
-    No *atual = l->inicio;
-    while(atual && atual->nome != valor){
-        anterior = atual;
-        atual = atual->prox;
-    }
-    if(!atual){//não achou
-        return false;
-    }
-    if(!anterior){//valor a ser removido é o primeiro da lista
-        l->inicio = atual->prox;
-        if(!l->inicio){//lista vai ficar vazia
-            l->fim = l->inicio;
-        }else{
-            l->inicio->ant = NULL;
-        }
-    }else{
-        anterior->prox = atual->prox;
-        if(!atual->prox){//o valor a ser excluido é o ultimo da lista
-            l->fim = anterior;
-        }else{
-            atual->prox->ant = anterior;
-        }
-    }
-    l->tamanho--;
-    delete(atual);
     return true;
 }
 
-void imprime(Lista *l){
-    No *n = l->inicio;
+bool validarRoteador(Lista *roteador, string texto){
+    No *n = roteador->inicio;
     while(n){
-        cout << "-----------------------------\n";
-        cout << n->nome;
-        cout << '\t';
-        cout << n->desc;
-        cout << '\t';
-        No *x = n->rot;
-        while(x != NULL){
-            cout << x->nome << '\t';
-            x = x->prox;
+        if(n->nome == texto){
+            return false;
         }
         n = n->prox;
-        if(n){
-            cout << "\n";
-        }
     }
-    cout << "\n";
-}
-
-void imprimeInverso(Lista *l){
-    No *n = l->fim;
-    while(n){
-        cout << "-----------------------------\n";
-        cout << n->nome;
-        cout << '\t';
-        cout << n->desc;
-        cout << '\t';
-        cout << n->rot->nome;
-        n = n->ant;
-        if(n){
-            cout << "\n";
-        }
-    }
-    cout << "\n";
-}
-
-void imprimeDescritor(Lista *l){
-    if(l->inicio){
-        cout << l->inicio->nome;
-    }else{
-        cout << "NULL";
-    }
-    cout << ", ";
-    if(l->fim){
-        cout << l->fim->nome;
-    }else{
-        cout << "NULL";
-    }
-    cout << ", " << l->tamanho << "\n";
-}
-
-
-No* buscaRecursiva(No *lista, string valor){
-    if (!lista) { // se n�o tiver mais elementos
-        return NULL;
-    }else if (lista->nome == valor){
-        return lista;
-    }else{
-        return buscaRecursiva(lista->prox, valor);
-    }
-}
-
-int frequencia(No *lista, string valor, int c){
-    if (!lista) { // se n�o tiver mais elementos
-        return c;
-    }else if (lista->desc == valor){
-        c++;
-    }
-    return frequencia(lista->prox, valor, c);
-}
-
-No* conectaRoteadorTerminal(No *roteador, string valor,No *terminal){
-    if (!roteador) { // se n�o tiver mais elementos
-        return NULL;
-    }else if (roteador->nome == valor){
-        terminal->rot = roteador;
-        return roteador;
-    }else{
-        return conectaRoteadorTerminal(roteador->prox, valor, terminal);
-    }
-}
-
-bool checkRemocaoRoteador(No *lista, string valor){
-    if (!lista) { // se n�o tiver mais elementos
-        return false;
-    }else if (lista->nome == valor){
-        return true;
-    }else{
-        cout << lista->nome << "\n";
-        return buscaRecursiva(lista->prox, valor);
-    }
-}
-
-//ROTEADORES Lista
-void insereRoteador(No *rot1, No* rot2){
-    No *novo = new No();
-    novo->prox = rot1->rot;
-    novo->nome = rot2->nome;
-    rot1->rot = novo;
-}
-
-bool removeRoteador(No *rot1, string nome){
-    No *atual = rot1->rot;
-    No *anterior = NULL;
-    while (atual && atual->nome != nome){
-        anterior = atual;
-        atual = atual->prox;
-    }
-    if (!atual) //se n�o encontrou valor -> atual == NULL
-        return false;
-    if (!atual->ant){ //valor está no primeiro nó da rot1 -> anterior == NULL
-        rot1->rot = atual->prox;
-    }else{
-        atual->ant->prox = atual->prox;
-        atual->prox->ant = atual->ant;
-    } // valor está no meio/final da rot1
     return true;
 }
 
-bool enviaPacotes(No *rot1, No *rot2){
-    if (!rot1) { // se n�o tiver mais elementos
-        return false;
-    }else if (rot1->nome == rot2->nome){
-        return true;
-    }else{
-        return enviaPacotes(rot1->prox, rot2);
-    }
-}
-
-
-//Sobrecarga de operador
-ostream& operator<<(ostream& os, const No *n){
-    return os << n->nome;
-}
-
-ostream& operator << (ostream& os, const Lista *l){
-    No *n = l->inicio;
-    while(n){
-        os << n;
-        n = n->prox;
-
-        if(n){
-            os << ", ";
+int main(){
+    Lista *roteador = new Lista();
+    Lista *terminal = new Lista();
+    int opt;
+    string nome, desc;
+    
+    //INSERIR VALORES
+    inserirInicio(roteador, "r1", "oi");
+    inserirInicio(roteador, "r2", "telemar");
+    inserirInicio(roteador, "r3", "gvt");
+    inserirInicio(roteador, "r4", "net");
+    inserirInicio(roteador, "r5", "telemar");
+    /////////////////
+    do{
+        cout << "\n-----Digite sua opção--------\n"
+        << "0 - Sair\n"
+        << "1 - Cadastra Roteador\n"
+        << "2 - Cadastra Terminal\n"
+        << "3 - Remove Roteador\n"
+        << "4 - Remove Terminal\n"
+        << "5 - Conecta Roteadores\n"
+        << "6 - Desconecta Roteadores\n"
+        << "7 - Frequencia Operadoras\n"
+        << "8 - Enviar Pacotes de Dados\n"
+        << "9 - Mostrar Terminais\n"
+        << "10 - Mostrar Roteadores: ";
+        cin >> opt;
+        cin.ignore();
+        switch(opt){
+            case 0:
+                return 0;
+            case 1:
+                do{
+                    cout << "Digite o nome do roteador: ";
+                    getline(cin, nome);
+                }while(!validarString(nome) && !validarRoteador(roteador, nome));
+                do{
+                    cout << "Digite a operadora do roteador: ";
+                    getline(cin, desc);
+                }while(!validarString(desc) && !validarRoteador(roteador, desc));
+                inserirInicio(roteador, nome, desc);
+                break;
+            case 2:
+                if(roteador->tamanho > 0){
+                    do{
+                        cout << "Digite o nome do terminal: ";
+                        getline(cin, nome);
+                    }while(!validarString(nome));
+                    do{
+                        cout << "Digite a localização do terminal: ";
+                        getline(cin, desc);
+                    }while(!validarString(desc));
+                    inserirInicio(terminal, nome, desc);
+                    string con;
+                    do{
+                        cout << "Conecte-se com qual roteador: ";
+                        getline(cin, con);
+                    }while(!validarString(con));
+                    No *busca = buscaRecursiva(roteador->inicio, con);
+                    if(busca){
+                        terminal->inicio->rot = busca;
+                    }else{
+                        cout << "Roteador não encontrado";
+                    }
+                }else{
+                    cout << "Cadastre um roteador primeiro";
+                }
+                break;
+            case 3:
+                do{
+                    cout << "Qual roteador deseja remover: ";
+                    getline(cin, nome);
+                }while(!validarString(nome));
+                if(checkRemocaoRoteador(terminal->inicio->rot, nome)){
+                    cout << "Roteador possui conexões";
+                }else{
+                    removeValor(roteador, nome);
+                    cout << "Valor removido";
+                }
+                break;
+            case 4:
+                do{
+                    cout << "Qual terminal deseja remover: ";
+                    getline(cin, nome);
+                }while(!validarString(nome));
+                removeValor(terminal, nome);
+                break;
+            case 5:{
+                cout << "Quais roteadores deseja conectar: ";
+                getline(cin, nome);
+                No *aux1 = buscaRecursiva(roteador->inicio, nome);
+                getline(cin, nome);
+                No *aux2 = buscaRecursiva(roteador->inicio, nome);
+                if(aux1 == NULL || aux2 == NULL){
+                    cout << "Valores não encontrados";
+                }else{
+                    insereRoteador(aux1, aux2);
+                    insereRoteador(aux2, aux1);
+                }
+                break;}
+            case 6:{
+                cout << "Quais roteadores deseja desconectar: ";
+                getline(cin, nome);
+                No *aux1 = buscaRecursiva(roteador->inicio, nome);
+                getline(cin, desc);
+                No *aux2 = buscaRecursiva(roteador->inicio, desc);
+                if(aux1 == NULL || aux2 == NULL){
+                    cout << "Valores não encontrados";
+                }else{
+                    if(removeRoteador(aux1, aux2->nome)){
+                        cout << "Roteador " << aux2->nome << " retirado de " << aux1->nome;
+                    }else{
+                        cout << "Não foi retirado";
+                    }
+                    cout << "\n";
+                    if(removeRoteador(aux2, aux1->nome)){
+                        cout << "Roteador " << aux1->nome << " retirado de " << aux2->nome;
+                    }else{
+                        cout << "Não foi retirado";
+                    }
+                }
+                
+                break;}
+            case 7:
+                do{
+                    cout << "Quais operadoras deseja buscar: ";
+                    getline(cin, nome);
+                }while(!validarString(nome));
+                cout << frequencia(roteador->inicio, nome, 0);
+                break;
+            case 8:{
+                cout << "Enviar pacotes entre quais terminais: ";
+                getline(cin, nome);
+                No *aux1 = buscaRecursiva(terminal->inicio, nome);
+                aux1 = buscaRecursiva(roteador->inicio, aux1->rot->nome);
+                getline(cin, desc);
+                No *aux2 = buscaRecursiva(terminal->inicio, desc);
+                aux2 = buscaRecursiva(roteador->inicio, aux2->rot->nome);
+                if(aux1 == NULL || aux2 == NULL){
+                    cout << "Valores não encontrados";
+                }else{
+                    bool check = false;
+                    if(enviaPacotes(aux1->rot, aux2) || aux1->nome == aux2->nome){
+                        cout << "Pacotes Enviados\n";
+                    }else{
+                        cout << aux1->nome;
+                        No *x = aux1->rot;
+                        while(x){
+                            cout << x->nome;
+                            check = enviaPacotes(x, aux2->rot);
+                            if(check){
+                                break;
+                            }
+                            x = x->prox;
+                        }
+                        if(check){
+                            cout << "Pacotes Enviados\n";
+                        }else{
+                            cout << "Não foi possivel enviar dados\n";
+                        }
+                    }
+                }
+                break;}
+            case 9:
+                imprimeInverso(terminal);
+                break;
+            case 10:
+                imprime(roteador);
+                break;
         }
-    }
-    return os;
+    }while(opt != 0);
 }
