@@ -172,7 +172,7 @@ int main(){
                     cout << "Valores não encontrados";
                 }else{
                     bool check = false;
-                    if(enviaPacotes(aux1->rot, aux2)){
+                    if(enviaPacotes(aux1->rot, aux2)  || aux1->nome == aux2->nome){
                         cout << "Pacotes Enviados\n";
                     }else{
                         cout << aux1->nome;
