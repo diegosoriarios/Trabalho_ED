@@ -128,8 +128,6 @@ int main(){
                 }
                 break;}
             case 6:{
-                cout << "Não está funcionando, ele diz que desconecta, e quando peço pra mostrar ele desconecta mas da um erro de segment default";
-                
                 cout << "Quais roteadores deseja desconectar: ";
                 getline(cin, nome);
                 No *aux1 = buscaRecursiva(roteador->inicio, nome);
@@ -138,14 +136,14 @@ int main(){
                 if(aux1 == NULL || aux2 == NULL){
                     cout << "Valores não encontrados";
                 }else{
-                    if(removeRoteador(aux1, desc)){
+                    if(removeRoteador(aux1, aux2->nome)){
                         cout << "Roteador " << aux2->nome << " retirado de " << aux1->nome;
                     }else{
                         cout << "Não foi retirado";
                     }
                     cout << "\n";
-                    if(removeRoteador(aux2, nome)){
-                        cout << "Roteador " << aux2->nome << " retirado de " << aux1->nome;
+                    if(removeRoteador(aux2, aux1->nome)){
+                        cout << "Roteador " << aux1->nome << " retirado de " << aux2->nome;
                     }else{
                         cout << "Não foi retirado";
                     }
@@ -193,7 +191,7 @@ int main(){
                 }
                 break;}
             case 9:
-                imprime(terminal);
+                imprimeInverso(terminal);
                 break;
             case 10:
                 imprime(roteador);
