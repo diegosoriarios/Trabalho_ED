@@ -137,10 +137,15 @@ void imprime(Lista *l){
 void imprimeInverso(Lista *l){
     No *n = l->fim;
     while(n){
+        cout << "-----------------------------\n";
         cout << n->nome;
+        cout << '\t';
+        cout << n->desc;
+        cout << '\t';
+        cout << n->rot->nome;
         n = n->ant;
         if(n){
-            cout << ", ";
+            cout << "\n";
         }
     }
     cout << "\n";
@@ -212,19 +217,11 @@ void insereRoteador(No *rot1, No* rot2){
 }
 
 bool removeRoteador(No *rot1, string nome){
-    No *anterior = NULL;
     No *atual = rot1->rot;
-    while(atual && atual->nome != nome){
-        anterior = atual;
-        atual = atual->prox;
-    }
-    if (!atual) //se não encontrou valor -> atual == NULL
-        return false;
-    if (!anterior){ //valor está no primeiro nó da rot1 -> anterior == NULL
+    if (!atual->ant){ //valor está no primeiro nó da rot1 -> anterior == NULL
         rot1 = atual->prox;
     }else // valor está no meio/final da rot1
-        anterior->prox = atual->prox;
-    cout << atual->desc;
+        atual->ant->prox = atual->prox;
     delete(atual); //libera a memória do nó
     return true;
 }
