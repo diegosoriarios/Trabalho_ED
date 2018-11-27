@@ -96,57 +96,73 @@ int main(){
                 }
                 break;
             case 3:
-                do{
-                    cout << "Qual roteador deseja remover: ";
-                    getline(cin, nome);
-                }while(!validarString(nome));
-                if(checkRemocaoRoteador(terminal->inicio->rot, nome)){
-                    cout << "Roteador possui conexões";
+                if(roteador->tamanho > 0){
+                    do{
+                        cout << "Qual roteador deseja remover: ";
+                        getline(cin, nome);
+                    }while(!validarString(nome));
+                    if(checkRemocaoRoteador(terminal->inicio->rot, nome)){
+                        cout << "Roteador possui conexões";
+                    }else{
+                        removeValor(roteador, nome);
+                        cout << "Valor removido";
+                    }
                 }else{
-                    removeValor(roteador, nome);
-                    cout << "Valor removido";
+                    cout << "Cadastre um roteador primeiro";
                 }
                 break;
             case 4:
-                do{
-                    cout << "Qual terminal deseja remover: ";
-                    getline(cin, nome);
-                }while(!validarString(nome));
-                removeValor(terminal, nome);
+                if(terminal->tamanho > 0){
+                    do{
+                        cout << "Qual terminal deseja remover: ";
+                        getline(cin, nome);
+                    }while(!validarString(nome));
+                    removeValor(terminal, nome);
+                }else{
+                    cout << "Cadastre um terminal primeiro";
+                }
                 break;
             case 5:{
-                cout << "Quais roteadores deseja conectar: ";
-                getline(cin, nome);
-                No *aux1 = buscaRecursiva(roteador->inicio, nome);
-                getline(cin, nome);
-                No *aux2 = buscaRecursiva(roteador->inicio, nome);
-                if(aux1 == NULL || aux2 == NULL){
-                    cout << "Valores não encontrados";
+                if(roteador->tamanho > 0){
+                    cout << "Quais roteadores deseja conectar: ";
+                    getline(cin, nome);
+                    No *aux1 = buscaRecursiva(roteador->inicio, nome);
+                    getline(cin, nome);
+                    No *aux2 = buscaRecursiva(roteador->inicio, nome);
+                    if(aux1 == NULL || aux2 == NULL){
+                        cout << "Valores não encontrados";
+                    }else{
+                        insereRoteador(aux1, aux2);
+                        insereRoteador(aux2, aux1);
+                    }
                 }else{
-                    insereRoteador(aux1, aux2);
-                    insereRoteador(aux2, aux1);
+                    cout << "Cadastre um roteador primeiro";
                 }
                 break;}
             case 6:{
-                cout << "Quais roteadores deseja desconectar: ";
-                getline(cin, nome);
-                No *aux1 = buscaRecursiva(roteador->inicio, nome);
-                getline(cin, desc);
-                No *aux2 = buscaRecursiva(roteador->inicio, desc);
-                if(aux1 == NULL || aux2 == NULL){
-                    cout << "Valores não encontrados";
+                if(roteador->tamanho > 0){
+                    cout << "Quais roteadores deseja desconectar: ";
+                    getline(cin, nome);
+                    No *aux1 = buscaRecursiva(roteador->inicio, nome);
+                    getline(cin, desc);
+                    No *aux2 = buscaRecursiva(roteador->inicio, desc);
+                    if(aux1 == NULL || aux2 == NULL){
+                        cout << "Valores não encontrados";
+                    }else{
+                        if(removeRoteador(aux1, aux2->nome)){
+                            cout << "Roteador " << aux2->nome << " retirado de " << aux1->nome;
+                        }else{
+                            cout << "Não foi retirado";
+                        }
+                        cout << "\n";
+                        if(removeRoteador(aux2, aux1->nome)){
+                            cout << "Roteador " << aux1->nome << " retirado de " << aux2->nome;
+                        }else{
+                            cout << "Não foi retirado";
+                        }
+                    }
                 }else{
-                    if(removeRoteador(aux1, aux2->nome)){
-                        cout << "Roteador " << aux2->nome << " retirado de " << aux1->nome;
-                    }else{
-                        cout << "Não foi retirado";
-                    }
-                    cout << "\n";
-                    if(removeRoteador(aux2, aux1->nome)){
-                        cout << "Roteador " << aux1->nome << " retirado de " << aux2->nome;
-                    }else{
-                        cout << "Não foi retirado";
-                    }
+                    cout << "Cadastre um roteador primeiro";
                 }
                 
                 break;}
@@ -158,36 +174,40 @@ int main(){
                 cout << frequencia(roteador->inicio, nome, 0);
                 break;
             case 8:{
-                cout << "Enviar pacotes entre quais terminais: ";
-                getline(cin, nome);
-                No *aux1 = buscaRecursiva(terminal->inicio, nome);
-                aux1 = buscaRecursiva(roteador->inicio, aux1->rot->nome);
-                getline(cin, desc);
-                No *aux2 = buscaRecursiva(terminal->inicio, desc);
-                aux2 = buscaRecursiva(roteador->inicio, aux2->rot->nome);
-                if(aux1 == NULL || aux2 == NULL){
-                    cout << "Valores não encontrados";
-                }else{
-                    bool check = false;
-                    if(enviaPacotes(aux1->rot, aux2) || aux1->nome == aux2->nome){
-                        cout << "Pacotes Enviados\n";
+                if(terminal->tamanho > 0){
+                    cout << "Enviar pacotes entre quais terminais: ";
+                    getline(cin, nome);
+                    No *aux1 = buscaRecursiva(terminal->inicio, nome);
+                    aux1 = buscaRecursiva(roteador->inicio, aux1->rot->nome);
+                    getline(cin, desc);
+                    No *aux2 = buscaRecursiva(terminal->inicio, desc);
+                    aux2 = buscaRecursiva(roteador->inicio, aux2->rot->nome);
+                    if(aux1 == NULL || aux2 == NULL){
+                        cout << "Valores não encontrados";
                     }else{
-                        cout << aux1->nome;
-                        No *x = aux1->rot;
-                        while(x){
-                            cout << x->nome;
-                            check = enviaPacotes(x, aux2->rot);
-                            if(check){
-                                break;
-                            }
-                            x = x->prox;
-                        }
-                        if(check){
+                        bool check = false;
+                        if(enviaPacotes(aux1->rot, aux2) || aux1->nome == aux2->nome){
                             cout << "Pacotes Enviados\n";
                         }else{
-                            cout << "Não foi possivel enviar dados\n";
+                            cout << aux1->nome;
+                            No *x = aux1->rot;
+                            while(x){
+                                cout << x->nome;
+                                check = enviaPacotes(x, aux2->rot);
+                                if(check){
+                                    break;
+                                }
+                                x = x->prox;
+                            }
+                            if(check){
+                                cout << "Pacotes Enviados\n";
+                            }else{
+                                cout << "Não foi possivel enviar dados\n";
+                            }
                         }
                     }
+                }else{
+                    cout << "Cadastre um terminal primeiro";
                 }
                 break;}
             case 9:
@@ -197,5 +217,6 @@ int main(){
                 imprime(roteador);
                 break;
         }
+        cout << endl;
     }while(opt != 0);
 }
