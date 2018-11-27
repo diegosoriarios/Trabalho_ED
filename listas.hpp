@@ -218,11 +218,19 @@ void insereRoteador(No *rot1, No* rot2){
 
 bool removeRoteador(No *rot1, string nome){
     No *atual = rot1->rot;
+    No *anterior = NULL;
+    while (atual && atual->nome != nome){
+        anterior = atual;
+        atual = atual->prox;
+    }
+    if (!atual) //se n�o encontrou valor -> atual == NULL
+        return false;
     if (!atual->ant){ //valor está no primeiro nó da rot1 -> anterior == NULL
-        rot1 = atual->prox;
-    }else // valor está no meio/final da rot1
+        rot1->rot = atual->prox;
+    }else{
         atual->ant->prox = atual->prox;
-    delete(atual); //libera a memória do nó
+        atual->prox->ant = atual->ant;
+    } // valor está no meio/final da rot1
     return true;
 }
 
