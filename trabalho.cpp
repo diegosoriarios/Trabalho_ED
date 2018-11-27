@@ -6,7 +6,6 @@
 using namespace std;
 
 #include "listas.hpp"
-#include "lista.hpp"
 
 bool validarString(string texto){
     for(int i = 0; i < texto.size(); i++){
@@ -33,7 +32,7 @@ int main(){
     Lista *terminal = new Lista();
     int opt;
     string nome, desc;
-
+    
     //INSERIR VALORES
     inserirInicio(roteador, "r1", "oi");
     inserirInicio(roteador, "r2", "telemar");
@@ -43,17 +42,17 @@ int main(){
     /////////////////
     do{
         cout << "\n-----Digite sua opção--------\n"
-             << "0 - Sair\n"
-             << "1 - Cadastra Roteador\n"
-             << "2 - Cadastra Terminal\n"
-             << "3 - Remove Roteador\n"
-             << "4 - Remove Terminal\n"
-             << "5 - Conecta Roteadores\n"
-             << "6 - Desconecta Roteadores\n"
-             << "7 - Frequencia Operadoras\n"
-             << "8 - Enviar Pacotes de Dados\n"
-             << "9 - Mostrar Terminais\n"
-             << "10 - Mostrar Roteadores: ";
+        << "0 - Sair\n"
+        << "1 - Cadastra Roteador\n"
+        << "2 - Cadastra Terminal\n"
+        << "3 - Remove Roteador\n"
+        << "4 - Remove Terminal\n"
+        << "5 - Conecta Roteadores\n"
+        << "6 - Desconecta Roteadores\n"
+        << "7 - Frequencia Operadoras\n"
+        << "8 - Enviar Pacotes de Dados\n"
+        << "9 - Mostrar Terminais\n"
+        << "10 - Mostrar Roteadores: ";
         cin >> opt;
         cin.ignore();
         switch(opt){
@@ -130,7 +129,7 @@ int main(){
                 break;}
             case 6:{
                 cout << "Não está funcionando, ele diz que desconecta, e quando peço pra mostrar ele desconecta mas da um erro de segment default";
-
+                
                 cout << "Quais roteadores deseja desconectar: ";
                 getline(cin, nome);
                 No *aux1 = buscaRecursiva(roteador->inicio, nome);
@@ -151,7 +150,7 @@ int main(){
                         cout << "Não foi retirado";
                     }
                 }
-
+                
                 break;}
             case 7:
                 do{
@@ -172,14 +171,14 @@ int main(){
                     cout << "Valores não encontrados";
                 }else{
                     bool check = false;
-                    if(enviaPacotes(aux1->rot, aux2)  || aux1->nome == aux2->nome){
+                    if(enviaPacotes(aux1->rot, aux2) || aux1->nome == aux2->nome){
                         cout << "Pacotes Enviados\n";
                     }else{
                         cout << aux1->nome;
                         No *x = aux1->rot;
                         while(x){
                             cout << x->nome;
-                            check = enviaPacotes(x, aux2);
+                            check = enviaPacotes(x, aux2->rot);
                             if(check){
                                 break;
                             }
